@@ -147,9 +147,9 @@ class Button:
         draw_text_ex(get_font_default(), self.text, [*self.text_pos], self.font_size, 1.0, BLACK)
 
 class ToggleButton(Button):
-    def __init__(self, pos, size, texts, border_size=100):
+    def __init__(self, pos, size, texts, border_size=100, index=0):
         self.texts = texts
-        self.index = 0
+        self.index = index
 
         super().__init__(pos, size, self.texts[self.index], border_size)
 

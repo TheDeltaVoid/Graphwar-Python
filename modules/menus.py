@@ -52,6 +52,9 @@ class SettingsMenu:
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
 
+        with open("assets/settings", "r") as file:
+                settings = eval(decode(file.read()))
+
         self.back_button = Button([50, 50], [100, 30], "Back", border_size=30)
         self.save_button = Button([210, 50], [100, 30], "Save", border_size=30)
 
@@ -59,7 +62,11 @@ class SettingsMenu:
         self.color_picker_secondary = ColorPicker([800, 300], COLORS.SECONDARY_LIST)
         self.color_picker_bg = ColorPicker([800, 500], COLORS.BG_LIST)
 
-        self.drag_mesure_mode_button = ToggleButton([100, 300], [100, 30], ["Vector", "Length"], border_size=30)
+        index = 0
+        if settings["game"]["mesure_mode"] == "length":
+            index = 1
+
+        self.drag_mesure_mode_button = ToggleButton([100, 300], [100, 30], ["Vector", "Length"], border_size=30, index=index)
 
     def update(self, delta_time: float):
         self.color_picker_primary.update(delta_time)

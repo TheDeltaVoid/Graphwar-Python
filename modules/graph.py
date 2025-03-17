@@ -110,6 +110,7 @@ def calculate_function(function: str, x: float, parsed=True) -> float:
     for token in tokens:
         if token in operators.keys():
             if token not in special_operators:
+                print(token)
                 a, b = stack.pop(), stack.pop()
                 stack.append(eval(str(b) + token + str(a)))
 

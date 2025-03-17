@@ -52,8 +52,6 @@ def parse_function(function: str) -> list[str, bool]:
 
                     function = "".join(chars)
 
-    print(function)
-
     tokens = tokenize(function)
 
     output = []
@@ -110,7 +108,7 @@ def calculate_function(function: str, x: float, parsed=True) -> float:
 
     tokens = parsed_function.split(",")
     for token in tokens:
-        if token in operators.keys() and len(stack) >= 2:
+        if token in operators.keys():
             if token not in special_operators:
                 a, b = stack.pop(), stack.pop()
                 stack.append(eval(str(b) + token + str(a)))
@@ -150,7 +148,7 @@ def claculate_graph(function: str, start, stop, step) -> list[list[float, float]
 def draw_graph(points: list[float, float], translate=[0, 0]):
     translate[0], translate[1] = int(translate[0]), int(translate[1])
 
-    points = [[translate[0] + x, translate[1] + y] for x, y in points]
+    points = [[translate[0] + x, translate[1] - y] for x, y in points]
 
     draw_line_strip(points, len(points), COLORS.PRIMARY)
 

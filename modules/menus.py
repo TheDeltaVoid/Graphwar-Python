@@ -1,7 +1,7 @@
 from pyray import *
 from modules.colors import COLORS
 
-from modules.gui import Button, ColorPicker
+from modules.gui import Button, ToggleButton, ColorPicker
 
 class MainMenu:
     def __init__(self, WIDTH, HEIGHT):
@@ -58,6 +58,8 @@ class SettingsMenu:
         self.color_picker_secondary = ColorPicker([800, 300], COLORS.SECONDARY_LIST)
         self.color_picker_bg = ColorPicker([800, 500], COLORS.BG_LIST)
 
+        self.btn = ToggleButton([100, 300], [100, 30], ["Test 1", "Test 2", "Test 3"], border_size=30)
+
     def update(self, delta_time: float):
         self.color_picker_primary.update(delta_time)
         self.color_picker_secondary.update(delta_time)
@@ -69,6 +71,8 @@ class SettingsMenu:
             COLORS.set_bg_color(self.color_picker_bg.get_color())
             COLORS.save_to_settings()
 
+        self.btn.update(delta_time)
+
         if self.back_button.update(delta_time):
             return "main"
         
@@ -77,6 +81,7 @@ class SettingsMenu:
     def render(self):
         self.back_button.render()
         self.save_button.render()
+        self.btn.render()
 
         self.color_picker_primary.render()
         self.color_picker_secondary.render()

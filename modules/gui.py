@@ -107,6 +107,12 @@ class Button:
         self.expand_ease_func = ease_out_quint
         self.retract_ease_func = ease_out_quint
 
+    def change_text(self, new_text):
+        self.text = new_text
+
+        self.text_size = measure_text_ex(get_font_default(), self.text, self.font_size, 1.0)
+        self.text_pos = [self.pos[0] + self.size[0] / 2 - self.text_size.x / 2, self.pos[1] + self.size[1] / 2 - self.text_size.y / 2]
+
     def update(self, delta_time: float) -> bool:
         mouse_pos = get_mouse_position()
 
@@ -139,3 +145,22 @@ class Button:
 
         draw_rectangle_rounded([*self.pos, *self.size], self.roundness, 20, COLORS.PRIMARY)
         draw_text_ex(get_font_default(), self.text, [*self.text_pos], self.font_size, 1.0, BLACK)
+
+class ToggleButton(Button):
+    def __init__(self, pos, size, texts, border_size=100):
+        self.texts = texts
+        self.index = 0
+
+        super().__init__(pos, size, self.texts[self.index], border_size)
+
+    def update(self, delta_time: float):
+        pressed = super().update(delta_time)
+
+        if pressed:
+            self.index += 1
+            self.index %= len(self.texts)
+
+            self.change_text(self.texts[self.index])
+    
+    def render(self):
+        return super().render()

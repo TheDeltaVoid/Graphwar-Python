@@ -44,9 +44,9 @@ def parse_function(function: str) -> list[str, bool]:
 
     for index, char in enumerate(function):
         if len(function) - (index + 1) >= 1:
-            if char in operators.keys() or index == 0:
-                if function[index + 1] in ["+", "-"] or (index == 0 and function[index] in ["+", "-"]):
-                    if index == 0:
+            if char in operators.keys() or (index == 0 or function[index - 1] == "("):
+                if function[index + 1] in ["+", "-"] or ((index == 0 or function[index - 1] == "(") and function[index] in ["+", "-"]):
+                    if index == 0 or function[index - 1] == "(":
                         chars = list(function)
                         chars.insert(index + 2, ")")
                         chars.insert(index, "(0")
@@ -116,7 +116,6 @@ def calculate_function(function: str, x: float, parsed=True) -> float:
     for token in tokens:
         if token in operators.keys():
             if token not in special_operators:
-                print(token)
                 a, b = stack.pop(), stack.pop()
                 stack.append(eval(str(b) + token + str(a)))
 

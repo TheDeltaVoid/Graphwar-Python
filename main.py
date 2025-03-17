@@ -19,7 +19,7 @@ def main():
 
     game = Game(WIDTH, HEIGHT)
 
-    test = GraphAnim("-1*x", [0, HEIGHT / 2])
+    test = GraphAnim("sin(x)*100 ", [0, HEIGHT / 2])
 
     current = "main"
     next_current = "main"

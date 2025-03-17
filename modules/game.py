@@ -40,6 +40,12 @@ class Game:
 
         self.own_player = Player([500, 500])
 
+    def reload_settings(self):
+        with open("assets/settings", "r") as file:
+            settings = eval(decode(file.read()))
+
+        self.drag_text_type = settings["game"]["mesure_mode"]
+
     def update(self, delta_time: float):
         self.btn.update(delta_time)
         mouse_pos = get_mouse_position()

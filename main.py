@@ -57,6 +57,7 @@ def main():
                 elif action == "host":
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
                     next_current = "game"
+                    game.reload_settings()
 
                 elif action == "quit":
                     transition_class = TransitionCircle(WIDTH, HEIGHT)

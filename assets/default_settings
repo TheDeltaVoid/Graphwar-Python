@@ -1,0 +1,18 @@
+{
+    "colors" : {
+        "PRIMARY" : [198, 125, 199],
+        "SECONDARY" : [30, 130, 201],
+        "BG" : [69, 48, 69]
+    },
+
+    "game" : {
+        "mesure_mode" : "vector",
+        "graph_anim_speed" : 1
+    },
+
+    "transition" : {
+        "in" : 0.4,
+        "out" : 0.4,
+        "hold" : 0.1
+    }
+}

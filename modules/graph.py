@@ -44,11 +44,17 @@ def parse_function(function: str) -> list[str, bool]:
 
     for index, char in enumerate(function):
         if len(function) - (index + 1) >= 1:
-            if char in operators.keys():
-                if function[index + 1] in ["+", "-"]:
-                    chars = list(function)
-                    chars.insert(index + 3, ")")
-                    chars.insert(index + 1, "(0")
+            if char in operators.keys() or index == 0:
+                if function[index + 1] in ["+", "-"] or (index == 0 and function[index] in ["+", "-"]):
+                    if index == 0:
+                        chars = list(function)
+                        chars.insert(index + 2, ")")
+                        chars.insert(index, "(0")
+
+                    else:
+                        chars = list(function)
+                        chars.insert(index + 3, ")")
+                        chars.insert(index + 1, "(0")
 
                     function = "".join(chars)
 

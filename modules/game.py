@@ -27,8 +27,6 @@ class Game:
         with open("assets/settings", "r") as file:
             settings = eval(decode(file.read()))
 
-        self.btn = Button([200, 200], [100, 100], "test")
-
         self.drag_start = [0, 0]
         self.drag_end = [0, 0]
         self.drag_vector = [0, 0]
@@ -38,8 +36,6 @@ class Game:
         self.drag_text_border_size = 5
         self.drag_text_type = settings["game"]["mesure_mode"] # "vector", "length"
 
-        self.own_player = Player([500, 500])
-
     def reload_settings(self):
         with open("assets/settings", "r") as file:
             settings = eval(decode(file.read()))
@@ -47,7 +43,6 @@ class Game:
         self.drag_text_type = settings["game"]["mesure_mode"]
 
     def update(self, delta_time: float):
-        self.btn.update(delta_time)
         mouse_pos = get_mouse_position()
 
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
@@ -69,8 +64,6 @@ class Game:
             self.drag_text_pos[0] = self.drag_start[0] + self.drag_vector[0] / 2 + self.drag_text_pos_off[0]
             self.drag_text_pos[1] = self.drag_start[1] + self.drag_vector[1] * -1 / 2 + self.drag_text_pos_off[1]
 
-        self.own_player.update(delta_time)
-
     def render(self):
         for i in range(0, self.WIDTH, 100):
             draw_line(i, 0, i, self.HEIGHT, COLORS.PRIMARY)
@@ -79,9 +72,6 @@ class Game:
         for i in range(0, self.WIDTH, 10):
             draw_line(i, 0, i, self.HEIGHT, [*COLORS.PRIMARY_LIST, 50])
             draw_line(0, i, self.WIDTH, i, [*COLORS.PRIMARY_LIST, 50])
-
-        draw_graph(claculate_graph("sin(x)*100", 0, self.WIDTH, 1), translate=self.own_player.pos)
-        self.btn.render()
 
         if self.is_dragging:
             draw_line_ex(self.drag_start, self.drag_end, 1, COLORS.PRIMARY)
@@ -100,5 +90,3 @@ class Game:
 
             draw_rectangle_rounded([*text_rect_pos, *text_rect_size], 0.2, 20, COLORS.PRIMARY)
             draw_text(text, int(self.drag_text_pos[0]), int(self.drag_text_pos[1]), 20, BLACK)
-
-        self.own_player.render()

@@ -6,6 +6,16 @@ from modules.easings import ease, ease_out_quint
 from pyray import *
 import math
 
+class InputBox:
+    def __init__(self):
+        pass
+
+    def update(self, delta_time: float):
+        pass
+
+    def render(self):
+        pass
+
 class Slider:
     def __init__(self, pos, start=0, stop=1, value=0):
         self.pos = pos

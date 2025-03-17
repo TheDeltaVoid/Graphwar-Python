@@ -172,11 +172,26 @@ class GraphAnim:
 
         self.points_shown = 0
 
+        self.disappear = False
+        self.finished = False
+
     def update(self, delta_time: float):
-        self.counter += delta_time * self.anim_speed
+        if not self.disappear:
+            self.counter += delta_time * self.anim_speed
+
+        else:
+            self.counter -= delta_time * self.anim_speed
+
         self.counter = min(max(self.counter, 0), 1)
+
+        if self.counter >= 1:
+            self.disappear = True
 
         self.points_shown = int(self.counter * self.points_count)
 
     def render(self):
-        draw_graph(self.points[:self.points_shown], self.translate)
+        if not self.disappear:
+            draw_graph(self.points[:self.points_shown], self.translate)
+
+        else:
+            draw_graph(self.points[self.points_count - self.points_shown:], self.translate)

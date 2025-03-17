@@ -19,8 +19,6 @@ def main():
 
     game = Game(WIDTH, HEIGHT)
 
-    test_anim = GraphAnim("sin(x)*100", [0, 200])
-
     current = "main"
     next_current = "main"
 
@@ -73,7 +71,6 @@ def main():
 
         elif current == "game":
             game.update(delta_time)
-            test_anim.update(delta_time)
 
         begin_drawing()
         clear_background(COLORS.BG)
@@ -86,8 +83,7 @@ def main():
 
         elif current == "game":
             game.render()
-            test_anim.render()
-
+            
         if transition_class != None:
             transition_class.render()
 

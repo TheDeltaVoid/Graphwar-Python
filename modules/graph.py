@@ -42,6 +42,18 @@ def parse_function(function: str) -> list[str, bool]:
     function.replace(" ", "")
     function = function.lower()
 
+    for index, char in enumerate(function):
+        if len(function) - (index + 1) >= 1:
+            if char in operators.keys():
+                if function[index + 1] in ["+", "-"]:
+                    chars = list(function)
+                    chars.insert(index + 3, ")")
+                    chars.insert(index + 1, "(0")
+
+                    function = "".join(chars)
+
+    print(function)
+
     tokens = tokenize(function)
 
     output = []
@@ -98,7 +110,7 @@ def calculate_function(function: str, x: float, parsed=True) -> float:
 
     tokens = parsed_function.split(",")
     for token in tokens:
-        if token in operators.keys():
+        if token in operators.keys() and len(stack) >= 2:
             if token not in special_operators:
                 a, b = stack.pop(), stack.pop()
                 stack.append(eval(str(b) + token + str(a)))

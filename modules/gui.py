@@ -7,14 +7,15 @@ from pyray import *
 import math
 
 class InputBox:
-    def __init__(self):
-        pass
+    def __init__(self, pos, size):
+        self.pos = pos
+        self.size = size
 
     def update(self, delta_time: float):
         pass
 
     def render(self):
-        pass
+        draw_rectangle_rounded([*self.pos, *self.size], 0.2, 20, COLORS.PRIMARY)
 
 class Slider:
     def __init__(self, pos, start=0, stop=1, value=0):

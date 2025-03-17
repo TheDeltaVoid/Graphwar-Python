@@ -19,6 +19,8 @@ def main():
 
     game = Game(WIDTH, HEIGHT)
 
+    test = GraphAnim("x*-1", [0, HEIGHT / 2])
+
     current = "main"
     next_current = "main"
 
@@ -71,6 +73,7 @@ def main():
 
         elif current == "game":
             game.update(delta_time)
+            test.update(delta_time)
 
         begin_drawing()
         clear_background(COLORS.BG)
@@ -83,7 +86,8 @@ def main():
 
         elif current == "game":
             game.render()
-            
+            test.render()
+
         if transition_class != None:
             transition_class.render()
 

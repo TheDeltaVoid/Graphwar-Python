@@ -3,7 +3,7 @@ import math
 
 from modules.colors import COLORS
 from modules.graph import *
-from modules.gui import Button
+from modules.gui import InputBox
 from modules.encryption import *
 
 class Player:
@@ -36,6 +36,8 @@ class Game:
         self.drag_text_border_size = 5
         self.drag_text_type = settings["game"]["mesure_mode"] # "vector", "length"
 
+        self.input_box = InputBox([40, 600], [1000, 100])
+
     def reload_settings(self):
         with open("assets/settings", "r") as file:
             settings = eval(decode(file.read()))
@@ -44,6 +46,7 @@ class Game:
 
     def update(self, delta_time: float):
         mouse_pos = get_mouse_position()
+        self.input_box.update(delta_time)
 
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
             self.drag_start[0] = mouse_pos.x
@@ -90,3 +93,7 @@ class Game:
 
             draw_rectangle_rounded([*text_rect_pos, *text_rect_size], 0.2, 20, COLORS.PRIMARY)
             draw_text(text, int(self.drag_text_pos[0]), int(self.drag_text_pos[1]), 20, BLACK)
+
+        draw_rectangle_rounded([30, 550, 1020, 150], 0.2, 20, COLORS.SECONDARY)
+        draw_rectangle_rounded([20, 540, 1040, 170], 0.2, 20, Color(0, 0, 0, 40))
+        self.input_box.render()

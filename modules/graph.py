@@ -138,16 +138,9 @@ def claculate_graph(function: str, start, stop, step) -> list[list[float, float]
 def draw_graph(points: list[float, float], translate=[0, 0]):
     translate[0], translate[1] = int(translate[0]), int(translate[1])
 
-    last_points = []
-    for point in points:
-        render_point = [translate[0] + int(point[0]), translate[1] - int(point[1 * -1])]
-        last_points.append(render_point)
+    points = [[translate[0] + x, translate[1] + y] for x, y in points]
 
-        if len(last_points) >= 2:
-            draw_line_ex(last_points[-2], Vector2(*render_point), 2, COLORS.PRIMARY)
-
-        else:
-            draw_circle(*render_point, 2, COLORS.PRIMARY)
+    draw_line_strip(points, len(points), COLORS.PRIMARY)
 
 def check_collision_graph_circle(points: list[float, float], translate: list[float, float], circle_pos: list[float, float], circle_radius: float) -> bool:
     translate[0], translate[1] = int(translate[0]), int(translate[1])

@@ -10,3 +10,5 @@ while not window_should_close():
     draw_text_ex(get_font_default(), "TEST TEXT", (20, 70), 20, 2.0, WHITE)
 
     end_drawing()
+
+# spacing is always font_size / 10

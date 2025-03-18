@@ -38,6 +38,7 @@ class Game:
 
         self.input_box = InputBox([40, 560], [500, 50])
         self.fire_button = Button([40, 640], [100, 40], "Fire", border_size=20)
+        self.clear_button = Button([160, 640], [100, 40], "Clear", border_size=20)
 
         self.control_box = [30, 550, 1020, 150]
         self.control_box_border = 10
@@ -61,7 +62,10 @@ class Game:
         self.input_box.update(delta_time)
 
         if self.fire_button.update(delta_time) or is_key_pressed(KeyboardKey.KEY_ENTER):
-            self.graph_anims.append(GraphAnim(self.input_box.text, [0, self.HEIGHT / 2]))
+            self.graph_anims.append(GraphAnim(self.input_box.text, [0, self.HEIGHT / 2], should_disappear=False))
+
+        if self.clear_button.update(delta_time):
+            self.graph_anims = []
 
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT) and not check_collision_point_rec(mouse_pos, self.control_box):
             self.drag_start[0] = mouse_pos.x
@@ -102,6 +106,7 @@ class Game:
         
         self.input_box.render()
         self.fire_button.render()
+        self.clear_button.render()
 
         if self.is_dragging:
             draw_line_ex(self.drag_start, self.drag_end, 1, COLORS.PRIMARY)

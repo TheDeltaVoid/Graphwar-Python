@@ -10,8 +10,6 @@ from modules.gui import *
 
 WIDTH, HEIGHT = 1080, 720
 
-claculate_graph("sin(x+5)", 0, 100, 1)
-
 def main():
     init_window(WIDTH, HEIGHT, "Graphwar Simon-Edition")
     set_exit_key(0)
@@ -21,8 +19,6 @@ def main():
     settings_menu = SettingsMenu(WIDTH, HEIGHT)
 
     game = Game(WIDTH, HEIGHT)
-
-    test = GraphAnim("x*0.5", [0, HEIGHT / 2])
 
     current = "main"
     next_current = "main"
@@ -76,7 +72,6 @@ def main():
 
         elif current == "game":
             game.update(delta_time)
-            test.update(delta_time)
 
         begin_drawing()
         clear_background(COLORS.BG)
@@ -89,7 +84,6 @@ def main():
 
         elif current == "game":
             game.render()
-            test.render()
 
         if transition_class != None:
             transition_class.render()

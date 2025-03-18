@@ -23,6 +23,9 @@ def tan(val):
     return val
 
 def calculate_graph(function, start, stop, step) -> list[float, float]:
+    function = function.replace(" ", "")
+    function = function.replace("^", "**")
+
     x = numpy.linspace(start, stop, int((stop - start) / step))
     y = eval(function, {"x" : x, "sin" : sin, "cos" : cos, "tan" : tan})
 

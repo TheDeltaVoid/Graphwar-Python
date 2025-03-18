@@ -2,13 +2,15 @@ from pyray import *
 
 from modules.colors import COLORS, rgb_to_hsv
 
-from modules.graph import GraphAnim
+from modules.graph import GraphAnim, claculate_graph
 from modules.menus import MainMenu, SettingsMenu
 from modules.game import Game
 from modules.transition import TransitionCircle
 from modules.gui import *
 
 WIDTH, HEIGHT = 1080, 720
+
+claculate_graph("sin(x+5)", 0, 100, 1)
 
 def main():
     init_window(WIDTH, HEIGHT, "Graphwar Simon-Edition")

@@ -39,24 +39,21 @@ def tokenize(function: str) -> list[str]:
 
 operators = {"+": 0 , "-" : 0, "*": 1 , "/": 1 , "^" : 2, "**" : 2, "s" : 3, "c" : 3, "t" : 3}
 def parse_function(function: str) -> list[str, bool]:
-    function.replace(" ", "")
+    function = function.replace(" ", "")
     function = function.lower()
 
-    for index, char in enumerate(function):
-        if len(function) - (index + 1) >= 1:
-            if char in operators.keys() or (index == 0 or function[index - 1] == "("):
-                if function[index + 1] in ["+", "-"] or ((index == 0 or function[index - 1] == "(") and function[index] in ["+", "-"]):
-                    if index == 0 or function[index - 1] == "(":
-                        chars = list(function)
-                        chars.insert(index + 2, ")")
-                        chars.insert(index, "(0")
+    chars = list(function)
+    index = 0
 
-                    else:
-                        chars = list(function)
-                        chars.insert(index + 3, ")")
-                        chars.insert(index + 1, "(0")
+    while index < len(chars):
+        if chars[index] == "-" and (index == 0 or chars[index - 1] in operators.keys() or chars[index - 1] == "("):
+            chars.insert(index + 2, ")")
+            chars.insert(index, "(0")
+            index += 3
 
-                    function = "".join(chars)
+        index += 1
+
+    function = "".join(chars)
 
     tokens = tokenize(function)
 

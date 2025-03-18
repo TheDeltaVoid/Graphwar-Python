@@ -2,7 +2,7 @@ from pyray import *
 
 from modules.colors import COLORS, rgb_to_hsv
 
-from modules.graph import GraphAnim, claculate_graph
+from modules.graph import GraphAnim, calculate_graph
 from modules.menus import MainMenu, SettingsMenu
 from modules.game import Game
 from modules.transition import TransitionCircle

@@ -20,7 +20,7 @@ def main():
 
     game = Game(WIDTH, HEIGHT)
 
-    test = GraphAnim("x*0.5", [0, HEIGHT / 2]) 
+    test = GraphAnim("x*0.5", [0, HEIGHT / 2])
 
     current = "main"
     next_current = "main"

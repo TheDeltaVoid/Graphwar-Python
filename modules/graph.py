@@ -22,9 +22,23 @@ def tan(val):
 
     return val
 
-def calculate_graph(function, start, stop, step) -> list[float, float]:
+def calculate_graph(function: str, start, stop, step) -> list[float, float]:
     function = function.replace(" ", "")
     function = function.replace("^", "**")
+
+    for index, char in enumerate(function):
+        if char == "x":
+            if function[index - 1] in list("1234567890"):
+                chars = list(function)
+                chars.insert(index, "*")
+                function = "".join(chars)
+
+            if len(function) > index + 1 and function[index + 1] in list("1234567890"):
+                chars = list(function)
+                chars.insert(index + 1, "*")
+                function = "".join(chars)
+
+    print(function)
 
     x = numpy.linspace(start, stop, int((stop - start) / step))
     y = eval(function, {"x" : x, "sin" : sin, "cos" : cos, "tan" : tan})

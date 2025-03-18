@@ -20,6 +20,7 @@ class InputBox:
 
         self.insert_index = 0
         self.insert_pos = 0
+        self.insert_size = [5, 0]
 
         self.font_size = 30
 
@@ -62,6 +63,8 @@ class InputBox:
         if is_key_pressed(KeyboardKey.KEY_LEFT):
             self.insert_index -= 1
 
+        self.insert_index = min(max(self.insert_index, 0), len(self.text))
+
         if is_key_pressed(KeyboardKey.KEY_BACKSPACE):
             self.on_backspace_press()
 
@@ -86,13 +89,15 @@ class InputBox:
         self.text_pos[1] = self.pos[1] + ( self.size[1] / 2 - text_size.y / 2)
 
         insert_text_size = measure_text_ex(get_font_default(), self.text[:self.insert_index], self.font_size, self.font_size / 10)
-        self.insert_pos = insert_text_size.x + self.pos[0] + self.text_padding
+        self.insert_pos = insert_text_size.x + self.pos[0] + self.text_padding + 2
+
+        self.insert_size[1] = text_size.y
 
     def render(self):
         draw_rectangle_rounded([*self.pos, *self.size], 0.2, 20, COLORS.PRIMARY)
         draw_text(self.text, int(self.text_pos[0]), int(self.text_pos[1]), int(self.font_size), BLACK)
 
-        draw_rectangle(int(self.insert_pos), int(self.text_pos[1]), 2, 20, BLACK)
+        draw_rectangle_rec([self.insert_pos, self.text_pos[1], *self.insert_size], BLACK)
 
 class Slider:
     def __init__(self, pos, start=0, stop=1, value=0):

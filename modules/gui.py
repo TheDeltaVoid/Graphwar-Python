@@ -7,15 +7,33 @@ from pyray import *
 import math
 
 class InputBox:
-    def __init__(self, pos, size):
+    def __init__(self, pos, size, always_selected=False):
         self.pos = pos
         self.size = size
 
+        self.text = ""
+
+        self.always_selected = always_selected
+
+        self.insert_index = -1
+
     def update(self, delta_time: float):
-        pass
+        keys = []
+        key = get_char_pressed()
+        if key != 0:
+            while key != 0:
+                keys.append(key)
+                key = get_char_pressed()
+
+        for key in keys:
+            self.text += chr(key)
+
+        if is_key_pressed(KeyboardKey.KEY_BACKSPACE):
+            self.text = self.text[:-1]
 
     def render(self):
         draw_rectangle_rounded([*self.pos, *self.size], 0.2, 20, COLORS.PRIMARY)
+        draw_text(self.text, int(self.pos[0]), int(self.pos[1]), 20, BLACK)
 
 class Slider:
     def __init__(self, pos, start=0, stop=1, value=0):

@@ -12,6 +12,7 @@ WIDTH, HEIGHT = 1080, 720
 
 def main():
     init_window(WIDTH, HEIGHT, "Graphwar Simon-Edition")
+    set_exit_key(0)
     set_target_fps(240)
 
     main_menu = MainMenu(WIDTH, HEIGHT)
@@ -19,7 +20,7 @@ def main():
 
     game = Game(WIDTH, HEIGHT)
 
-    test = GraphAnim("sin(x)*100 ", [0, HEIGHT / 2])
+    test = GraphAnim("x*0.5", [0, HEIGHT / 2]) 
 
     current = "main"
     next_current = "main"

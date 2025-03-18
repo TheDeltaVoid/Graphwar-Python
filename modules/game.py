@@ -36,7 +36,16 @@ class Game:
         self.drag_text_border_size = 5
         self.drag_text_type = settings["game"]["mesure_mode"] # "vector", "length"
 
-        self.input_box = InputBox([40, 600], [1000, 100])
+        self.input_box = InputBox([40, 560], [500, 50])
+
+        self.control_box = [30, 550, 1020, 150]
+        self.control_box_border = 10
+
+        self.control_box_shadow = self.control_box
+        self.control_box_shadow[0] -= self.control_box_border
+        self.control_box_shadow[1] -= self.control_box_border
+        self.control_box_shadow[2] += self.control_box_border * 2
+        self.control_box_shadow[3] += self.control_box_border * 2
 
     def reload_settings(self):
         with open("assets/settings", "r") as file:
@@ -48,7 +57,7 @@ class Game:
         mouse_pos = get_mouse_position()
         self.input_box.update(delta_time)
 
-        if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
+        if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT) and not check_collision_point_rec(mouse_pos, self.control_box):
             self.drag_start[0] = mouse_pos.x
             self.drag_start[1] = mouse_pos.y
 
@@ -76,6 +85,10 @@ class Game:
             draw_line(i, 0, i, self.HEIGHT, [*COLORS.PRIMARY_LIST, 50])
             draw_line(0, i, self.WIDTH, i, [*COLORS.PRIMARY_LIST, 50])
 
+        draw_rectangle_rounded(self.control_box, 0.2, 20, COLORS.SECONDARY)
+        draw_rectangle_rounded(self.control_box_shadow, 0.2, 20, Color(0, 0, 0, 40))
+        self.input_box.render()
+
         if self.is_dragging:
             draw_line_ex(self.drag_start, self.drag_end, 1, COLORS.PRIMARY)
             draw_circle(int(self.drag_start[0]), int(self.drag_start[1]), 3, BLACK)
@@ -93,7 +106,3 @@ class Game:
 
             draw_rectangle_rounded([*text_rect_pos, *text_rect_size], 0.2, 20, COLORS.PRIMARY)
             draw_text(text, int(self.drag_text_pos[0]), int(self.drag_text_pos[1]), 20, BLACK)
-
-        draw_rectangle_rounded([30, 550, 1020, 150], 0.2, 20, COLORS.SECONDARY)
-        draw_rectangle_rounded([20, 540, 1040, 170], 0.2, 20, Color(0, 0, 0, 40))
-        self.input_box.render()

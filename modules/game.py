@@ -62,7 +62,9 @@ class Game:
         self.input_box.update(delta_time)
 
         if self.fire_button.update(delta_time) or is_key_pressed(KeyboardKey.KEY_ENTER):
-            self.graph_anims.append(GraphAnim(self.input_box.text, [0, self.HEIGHT / 2], should_disappear=False))
+            anim = GraphAnim(self.input_box.text, [0, self.HEIGHT / 2], should_disappear=False)
+            if anim.initialized:
+                self.graph_anims.append(anim)
 
         if self.clear_button.update(delta_time):
             self.graph_anims = []

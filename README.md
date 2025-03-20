@@ -6,10 +6,14 @@ If you want to run it by yourself download python from https://www.python.org (I
 - raylib (install as admin)
 - numpy
 
+```
 python -m pip install pyray
 python -m pip install raylib
 python -m pip install numpy
+```
 
 and then just start the main.py file: (assuming your in the same folder as the main.py file):
 
+```
 python main.py
+```

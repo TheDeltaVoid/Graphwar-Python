@@ -3,10 +3,12 @@ import threading
 
 from encryption import *
 
+DEFAULT_PORT = 6987
+
 class Server:
     def __init__(self, recv_callback):
         self.socket = s.socket()
-        self.socket.bind(("localhost", 10))
+        self.socket.bind(("localhost", DEFAULT_PORT))
 
         self.connection_thread = threading.Thread(target=self.listen)
         self.connection_thread.start()
@@ -104,7 +106,7 @@ class Client:
         self.recv_callback_func(text)
 
     def connect(self):
-        self.connection.connect(("localhost", 10))
+        self.connection.connect(("localhost", DEFAULT_PORT))
         self.connected = True
 
     def close(self):

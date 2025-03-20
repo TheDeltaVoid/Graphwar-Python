@@ -17,3 +17,8 @@ and then just start the main.py file: (assuming your in the same folder as the m
 ```
 python main.py
 ```
+
+TODO:
+- implement networking in game
+- hostnames other than localhost
+- rework the settings menu

@@ -68,7 +68,7 @@ class SettingsMenu:
 
         self.drag_mesure_mode_button = ToggleButton([100, 300], [100, 30], ["Vector", "Length"], border_size=30, index=index)
 
-    def update(self, delta_time: float):
+    def update(self, delta_time: float, back_action: str) -> str:
         self.color_picker_primary.update(delta_time)
         self.color_picker_secondary.update(delta_time)
         self.color_picker_bg.update(delta_time)
@@ -95,7 +95,7 @@ class SettingsMenu:
         self.drag_mesure_mode_button.update(delta_time)
 
         if self.back_button.update(delta_time):
-            return "main"
+            return back_action
         
         return "stay"
 

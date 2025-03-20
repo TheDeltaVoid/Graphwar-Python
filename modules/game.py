@@ -39,6 +39,8 @@ class Game:
         self.input_box = InputBox([40, 560], [500, 50])
         self.fire_button = Button([40, 640], [100, 40], "Fire", border_size=20)
         self.clear_button = Button([160, 640], [100, 40], "Clear", border_size=20)
+        self.settings_button = Button([920, 565], [120, 40], "Settings", border_size=20)
+        self.exit_button = Button([920, 640], [120, 40], "Exit", border_size=20)
 
         self.control_box = [30, 550, 1020, 150]
         self.control_box_border = 10
@@ -69,6 +71,12 @@ class Game:
         if self.clear_button.update(delta_time):
             self.graph_anims = []
 
+        if self.settings_button.update(delta_time):
+            return "settings"
+        
+        if self.exit_button.update(delta_time):
+            return "main"
+
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT) and not check_collision_point_rec(mouse_pos, self.control_box):
             self.drag_start[0] = mouse_pos.x
             self.drag_start[1] = mouse_pos.y
@@ -91,6 +99,8 @@ class Game:
         for anim in self.graph_anims:
             anim.update(delta_time)
 
+        return "stay"
+
     def render(self):
         for i in range(0, self.WIDTH, 100):
             draw_line(i, 0, i, self.HEIGHT, COLORS.PRIMARY)
@@ -109,6 +119,8 @@ class Game:
         self.input_box.render()
         self.fire_button.render()
         self.clear_button.render()
+        self.settings_button.render()
+        self.exit_button.render()
 
         if self.is_dragging:
             draw_line_ex(self.drag_start, self.drag_end, 1, COLORS.PRIMARY)

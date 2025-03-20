@@ -28,7 +28,7 @@ def calculate_graph(function: str, start, stop, step) -> list[float, float]:
 
     for index, char in enumerate(function):
         if char == "x":
-            if function[index - 1] in list("1234567890"):
+            if index != 0 and function[index - 1] in list("1234567890"):
                 chars = list(function)
                 chars.insert(index, "*")
                 function = "".join(chars)
@@ -41,7 +41,7 @@ def calculate_graph(function: str, start, stop, step) -> list[float, float]:
     print(function)
 
     x = numpy.linspace(start, stop, int((stop - start) / step))
-    y = eval(function, {"x" : x, "sin" : sin, "cos" : cos, "tan" : tan})
+    y = eval(function, {"x" : x, "sin" : sin, "cos" : cos, "tan" : tan, "sqrt" : numpy.sqrt})
 
     return [[x_val, y_val] for x_val, y_val in zip(x, y)]
 

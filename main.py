@@ -22,21 +22,27 @@ def main():
 
     current = "main"
     next_current = "main"
+    last_current = "main"
 
     in_transition = False
     transition_class = None
     transition_action = ""
 
+    changed = True
     delta_time = 0
-    run = True
+    run = True 
     while not window_should_close() and run:
         delta_time = get_frame_time()
 
         if transition_class != None:
             transition_action = transition_class.update(delta_time)
+            if transition_action == "in":
+                changed = False
 
-            if transition_action == "hold":
+            if transition_action == "hold" and not changed:
+                last_current = current
                 current = next_current
+                changed = True
 
             elif transition_action == "end":
                 transition_class = None
@@ -49,29 +55,32 @@ def main():
             action = main_menu.update(delta_time)
 
             if action != "stay" and not in_transition:
-                if action == "settings":
+                if action == "settings" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
                     next_current = "settings"
 
-                elif action == "host":
+                elif action == "host" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
                     next_current = "game"
                     game.reload_settings()
 
-                elif action == "quit":
+                elif action == "quit" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
                     next_current = "quit"
 
         elif current == "settings":
-            action = settings_menu.update(delta_time)
+            action = settings_menu.update(delta_time, last_current)
 
-            if action != "stay":
-                if action == "main":
-                    transition_class = TransitionCircle(WIDTH, HEIGHT)
-                    next_current = "main"
+            if action != "stay" and transition_class == None:
+                transition_class = TransitionCircle(WIDTH, HEIGHT)
+                next_current = action
 
         elif current == "game":
-            game.update(delta_time)
+            action = game.update(delta_time)
+
+            if action != "stay" and transition_class == None:
+                transition_class = TransitionCircle(WIDTH, HEIGHT)
+                next_current = action
 
         begin_drawing()
         clear_background(COLORS.BG)

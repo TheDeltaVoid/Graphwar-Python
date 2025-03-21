@@ -108,6 +108,12 @@ class Game:
             return "settings"
         
         if self.exit_button.update(delta_time):
+            if self.server != None:
+                self.server.close()
+
+            if self.client != None:
+                self.client.close()
+
             return "main"
 
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT) and not check_collision_point_rec(mouse_pos, self.control_box):

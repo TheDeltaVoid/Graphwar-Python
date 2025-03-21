@@ -1,8 +1,9 @@
 from pyray import *
+from socket import gethostname
 
 from modules.colors import COLORS, rgb_to_hsv
 
-from modules.menus import MainMenu, SettingsMenu
+from modules.menus import MainMenu, SettingsMenu, HostMenu, ConnectMenu
 from modules.game import Game
 from modules.transition import TransitionCircle
 from modules.gui import *
@@ -15,10 +16,12 @@ def main():
     set_exit_key(0)
     set_target_fps(240)
 
+    game = Game(WIDTH, HEIGHT)
+
     main_menu = MainMenu(WIDTH, HEIGHT)
     settings_menu = SettingsMenu(WIDTH, HEIGHT)
-
-    game = Game(WIDTH, HEIGHT)
+    host_menu = HostMenu(game.recv_callback)
+    connect_menu = ConnectMenu(game.recv_callback)
 
     current = "main"
     next_current = "main"
@@ -27,6 +30,9 @@ def main():
     in_transition = False
     transition_class = None
     transition_action = ""
+
+    client = None
+    server = None
 
     changed = True
     delta_time = 0
@@ -40,6 +46,15 @@ def main():
                 changed = False
 
             if transition_action == "hold" and not changed:
+                if next_current == "game":
+                    game.reload_settings()
+
+                if next_current == "host":
+                    host_menu.init_server()
+
+                if next_current == "join":
+                    connect_menu.init_client()
+
                 last_current = current
                 current = next_current
                 changed = True
@@ -54,15 +69,18 @@ def main():
         elif current == "main":
             action = main_menu.update(delta_time)
 
-            if action != "stay" and not in_transition:
+            if action != "stay" and transition_class == None:
                 if action == "settings" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
                     next_current = "settings"
 
                 elif action == "host" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
-                    next_current = "game"
-                    game.reload_settings()
+                    next_current = "host"
+
+                elif action == "join" and transition_class == None:
+                    transition_class = TransitionCircle(WIDTH, HEIGHT)
+                    next_current = "join"
 
                 elif action == "quit" and transition_class == None:
                     transition_class = TransitionCircle(WIDTH, HEIGHT)
@@ -82,6 +100,28 @@ def main():
                 transition_class = TransitionCircle(WIDTH, HEIGHT)
                 next_current = action
 
+        elif current == "host":
+            action = host_menu.update(delta_time)
+
+            if action != "stay" and transition_class == None:
+                if action == "game":
+                    server = host_menu.server
+                    game.set_server(server)
+
+                transition_class = TransitionCircle(WIDTH, HEIGHT)
+                next_current = action
+
+        elif current == "join" and transition_class == None:
+            action = connect_menu.update(delta_time)
+
+            if action != "stay":
+                if action == "game":
+                    client = connect_menu.client
+                    game.set_client(client)
+
+                transition_class = TransitionCircle(WIDTH, HEIGHT)
+                next_current = action
+
         begin_drawing()
         clear_background(COLORS.BG)
 
@@ -93,6 +133,12 @@ def main():
 
         elif current == "game":
             game.render()
+
+        elif current == "host":
+            host_menu.render()
+
+        elif current == "join":
+            connect_menu.render()
 
         if transition_class != None:
             transition_class.render()

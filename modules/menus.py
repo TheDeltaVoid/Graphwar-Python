@@ -1,8 +1,11 @@
 from pyray import *
 from modules.colors import COLORS
 
-from modules.gui import Button, ToggleButton, ColorPicker
+from modules.gui import Button, ToggleButton, ColorPicker, InputBox
 from modules.encryption import *
+from modules.networking import Client, Server
+
+from socket import gethostname
 
 class MainMenu:
     def __init__(self, WIDTH, HEIGHT):
@@ -107,3 +110,60 @@ class SettingsMenu:
         self.color_picker_primary.render()
         self.color_picker_secondary.render()
         self.color_picker_bg.render()
+
+class HostMenu:
+    def __init__(self, recv_callback):
+        self.hostname = gethostname().lower()
+
+        self.recv_callback = recv_callback
+
+    def init_server(self):
+        self.server = Server(self.recv_callback)
+        self.server.start()
+
+    def update(self, delta_time: float):
+        if self.server.connected:
+            self.server.start_recv()
+            return "game"
+        
+        return "stay"
+
+    def render(self):
+        draw_text(self.hostname, 100, 100, 20, BLACK)
+
+class ConnectMenu:
+    def __init__(self, recv_callback):
+        self.input_box = InputBox([100, 100], [300, 40], always_selected=True)
+        self.current = "input"
+
+        self.recv_callback = recv_callback
+
+        self.hostname = ""
+        self.client = None
+
+    def init_client(self):
+        self.client = Client(self.recv_callback, self.hostname)
+        
+    def update(self, delta_time: float):
+        if self.current == "input":
+            self.input_box.update(delta_time)
+
+            if is_key_pressed(KeyboardKey.KEY_ENTER):
+                self.current = "connect"
+                self.hostname = self.input_box.text.strip()
+                self.init_client()
+                self.client.start()
+
+        if self.current == "connect":
+            if self.client.connected:
+                self.client.start_recv()
+                return "game"
+            
+        return "stay"
+
+    def render(self):
+        if self.current == "input":
+            self.input_box.render()
+
+        if self.current == "connect":
+            pass

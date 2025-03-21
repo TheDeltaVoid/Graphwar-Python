@@ -7,11 +7,9 @@ DEFAULT_PORT = 6987
 
 class Server:
     def __init__(self, recv_callback):
-        self.socket = s.socket()
-        self.socket.bind(("localhost", DEFAULT_PORT))
+        self.hostname = s.gethostname()
 
-        self.connection_thread = threading.Thread(target=self.listen)
-        self.connection_thread.start()
+        self.socket = s.socket()
 
         self.recv_thread = None
         self.send_thread = None
@@ -21,6 +19,12 @@ class Server:
 
         self.run = True
         self.recv_callback_func = recv_callback
+
+    def start(self):
+        self.socket.bind((self.hostname, DEFAULT_PORT))
+
+        self.connection_thread = threading.Thread(target=self.listen)
+        self.connection_thread.start()
 
     def fire(self, function: str):
         self.send_thread = threading.Thread(target=self.send, args=(function,))
@@ -36,8 +40,9 @@ class Server:
         self.recv_thread.start()
 
     def recv(self):
-        if self.connected:
-            while self.run:
+        while self.run:
+            if self.connected:
+                self.connection.settimeout(0.1)
                 data = self.connection.recv(1024)
                 text = data.decode()
 
@@ -66,11 +71,10 @@ class Server:
             self.connected = False
 
 class Client:
-    def __init__(self, recv_callback):
-        self.connection = s.socket()
+    def __init__(self, recv_callback, hostname):
+        self.hostname = hostname
 
-        self.connection_thread = threading.Thread(target=self.connect)
-        self.connection_thread.start()
+        self.connection = s.socket()
 
         self.recv_thread = None
         self.send_thread = None
@@ -79,6 +83,10 @@ class Client:
 
         self.run = True
         self.recv_callback_func = recv_callback
+
+    def start(self):
+        self.connection_thread = threading.Thread(target=self.connect)
+        self.connection_thread.start()
 
     def fire(self, function: str):
         self.send_thread = threading.Thread(target=self.send, args=(function,))
@@ -94,8 +102,9 @@ class Client:
         self.recv_thread.start()
 
     def recv(self):
-        if self.connected:
-            while self.run:
+        while self.run:
+            if self.connected:
+                self.connection.settimeout(0.1)
                 data = self.connection.recv(1024)
                 text = data.decode()
 
@@ -106,7 +115,7 @@ class Client:
         self.recv_callback_func(text)
 
     def connect(self):
-        self.connection.connect(("localhost", DEFAULT_PORT))
+        self.connection.connect((self.hostname, DEFAULT_PORT))
         self.connected = True
 
     def close(self):

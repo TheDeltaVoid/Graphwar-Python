@@ -5,6 +5,7 @@ from modules.colors import COLORS
 from modules.graph import *
 from modules.gui import InputBox, Button
 from modules.encryption import *
+from modules.networking import Server, Client
 
 class Player:
     def __init__(self, pos):
@@ -50,8 +51,33 @@ class Game:
         self.control_box_shadow[1] -= self.control_box_border
         self.control_box_shadow[2] += self.control_box_border * 2
         self.control_box_shadow[3] += self.control_box_border * 2
+        
+        self.player = Player([100, 100])
+        self.other_player = Player([200, 500])
 
         self.graph_anims = []
+
+        self.server = None
+        self.client = None
+
+    def set_server(self, server: Server):
+        self.client = None
+        self.server = server
+
+    def set_client(self, client: Client):
+        self.server = None
+        self.client = client
+
+    def recv_callback(self, function):
+        self.add_graph(function, self.other_player)
+
+    def add_graph(self, function, player=None):
+        if player == None:
+            player = self.player
+
+        anim = GraphAnim(function, [0, self.HEIGHT / 2], should_disappear=False)
+        if anim.initialized:
+            self.graph_anims.append(anim)
 
     def reload_settings(self):
         with open("assets/settings", "r") as file:
@@ -66,10 +92,17 @@ class Game:
         if self.fire_button.update(delta_time) or is_key_pressed(KeyboardKey.KEY_ENTER):
             anim = GraphAnim(self.input_box.text, [0, self.HEIGHT / 2], should_disappear=False)
             if anim.initialized:
+                if self.server != None:
+                    self.server.fire(self.input_box.text)
+
+                elif self.client != None:
+                    self.client.fire(self.input_box.text)
+
                 self.graph_anims.append(anim)
 
         if self.clear_button.update(delta_time):
-            self.graph_anims = []
+            pass
+            #self.graph_anims = []
 
         if self.settings_button.update(delta_time):
             return "settings"
@@ -121,6 +154,9 @@ class Game:
         self.clear_button.render()
         self.settings_button.render()
         self.exit_button.render()
+
+        self.player.render()
+        self.other_player.render()
 
         if self.is_dragging:
             draw_line_ex(self.drag_start, self.drag_end, 1, COLORS.PRIMARY)

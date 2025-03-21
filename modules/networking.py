@@ -1,7 +1,7 @@
 import socket as s
 import threading
 
-from encryption import *
+from modules.encryption import *
 
 DEFAULT_PORT = 6987
 

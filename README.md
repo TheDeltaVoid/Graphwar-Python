@@ -21,7 +21,5 @@ python main.py
 ```
 
 TODO:
-- implement networking in game
 - make the game a game
-- hostnames other than localhost
 - rework the settings menu

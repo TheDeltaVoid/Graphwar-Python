@@ -116,6 +116,7 @@ class HostMenu:
         self.hostname = gethostname().lower()
 
         self.recv_callback = recv_callback
+        self.server = None
 
     def init_server(self):
         self.server = Server(self.recv_callback)

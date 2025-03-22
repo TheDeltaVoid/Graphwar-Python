@@ -27,7 +27,6 @@ def main():
     next_current = "main"
     last_current = "main"
 
-    in_transition = False
     transition_class = None
     transition_action = ""
 
@@ -147,5 +146,23 @@ def main():
         end_drawing()
 
     close_window()
+
+    if host_menu.server != None:
+        host_menu.server.close()
+
+    if connect_menu.client != None:
+        connect_menu.client.close()
+
+    if server != None:
+        server.close()
+
+    if client != None:
+        client.close()
+
+    if game.server != None:
+        game.server.close()
+
+    if game.client != None:
+        game.client.close()
 
 main()

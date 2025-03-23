@@ -10,7 +10,7 @@ class Server:
     def __init__(self, recv_callback):
         self.hostname = s.gethostname()
 
-        self.socket = s.socket()
+        self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
 
         self.connection_thread = None
         self.recv_thread = None
@@ -22,28 +22,36 @@ class Server:
         self.run = True
         self.recv_callback_func = recv_callback
 
+        self.shuld_close = False
+        self.closed = False
+
+    def update(self, delta_time: float):
+        if self.shuld_close and not self.connected:
+            self.close()
+
     def start(self):
         self.socket.bind(("0.0.0.0", DEFAULT_PORT))
 
         self.connection_thread = threading.Thread(target=self.listen)
         self.connection_thread.start()
 
-    def fire(self, function: str):
-        self.send_thread = threading.Thread(target=self.send, args=(function,))
+    def send(self, text: str):
+        self.send_thread = threading.Thread(target=self._send, args=(text,))
         self.send_thread.start()
 
-    def send(self, text: str):
-        if self.connected:
+    def _send(self, text: str):
+        if self.connected and not self.shuld_close:
             data = text.encode()
             print("SERVER SEND: ", text, " | ", self.addr)
             self.connection.send(data)
 
     def start_recv(self):
-        self.recv_thread = threading.Thread(target=self.recv)
-        self.recv_thread.start()
+        if self.recv_thread == None:
+            self.recv_thread = threading.Thread(target=self.recv)
+            self.recv_thread.start()
 
     def recv(self):
-        while self.run:
+        while self.run and not self.shuld_close:
             if self.connected:
                 try:
                     self.connection.settimeout(1)
@@ -51,9 +59,13 @@ class Server:
                     text = data.decode()
 
                     print("SERVER RECV: ", text)
-                    self.recv_callback(text)
+                    if text != "CLOSE":
+                        self.recv_callback(text)
 
-                except Exception:
+                    else:
+                        self.shuld_close = True
+
+                except s.timeout:
                     continue
 
     def recv_callback(self, text: str):
@@ -71,12 +83,17 @@ class Server:
                 print("SERVER CONNECTED: ", self.addr)
                 break
 
-            except Exception:
+            except s.timeout:
                 continue
 
     def close(self):
+        if self.closed:
+            return
+        
         if self.connected:
             self.run = False
+
+            self._send("CLOSE")
 
             if self.recv_thread != None:
                 self.recv_thread.join()
@@ -86,6 +103,9 @@ class Server:
 
             self.connection.close()
             self.connected = False
+            
+            self.closed = True
+            print("SERVER CLOSED")
 
         else:
             self.run = False
@@ -93,13 +113,14 @@ class Server:
             if self.connection_thread != None:
                 self.connection_thread.join()
 
-        print("SERVER CLOSED")
+            self.closed = True
+            print("SERVER CLOSED")
 
 class Client:
     def __init__(self, recv_callback, hostname):
         self.hostname = hostname
 
-        self.connection = s.socket()
+        self.connection = s.socket(s.AF_INET, s.SOCK_STREAM)
 
         self.connection_thread = None
         self.recv_thread = None
@@ -110,26 +131,34 @@ class Client:
         self.run = True
         self.recv_callback_func = recv_callback
 
+        self.shuld_close = False
+        self.closed = False
+
+    def update(self, delta_time: float):
+        if self.shuld_close:
+            self.close()
+
     def start(self):
         self.connection_thread = threading.Thread(target=self.connect)
         self.connection_thread.start()
 
-    def fire(self, function: str):
-        self.send_thread = threading.Thread(target=self.send, args=(function,))
+    def send(self, text: str):
+        self.send_thread = threading.Thread(target=self._send, args=(text,))
         self.send_thread.start()
 
-    def send(self, text: str):
-        if self.connected:
+    def _send(self, text: str):
+        if self.connected and not self.shuld_close:
             data = text.encode()
             print("CLIENT SEND: ", text, " | ", (self.connection.getpeername()))
             self.connection.send(data)
 
     def start_recv(self):
-        self.recv_thread = threading.Thread(target=self.recv)
-        self.recv_thread.start()
+        if self.recv_thread == None:
+            self.recv_thread = threading.Thread(target=self.recv)
+            self.recv_thread.start()
 
     def recv(self):
-        while self.run:
+        while self.run and not self.shuld_close:
             if self.connected:
                 try:
                     self.connection.settimeout(1)
@@ -137,9 +166,13 @@ class Client:
                     text = data.decode()
 
                     print("CLIENT RECV: ", text)
-                    self.recv_callback(text)
+                    if text != "CLOSE":
+                        self.recv_callback(text)
 
-                except Exception:
+                    else:
+                        self.shuld_close = True
+
+                except s.timeout:
                     continue
 
     def recv_callback(self, text: str):
@@ -154,16 +187,21 @@ class Client:
 
                 self.connected = True
                 print("CLIENT CONNECTED: ", (self.connection.getpeername()))
+                break
 
-            except Exception as e:
-                self.connection = s.socket()
+            except s.timeout as e:
+                self.connection = s.socket(s.AF_INET, s.SOCK_STREAM)
                 self.connection.settimeout(1)
-                print(e)
                 continue
 
     def close(self):
+        if self.closed:
+            return
+        
         if self.connected:
             self.run = False
+
+            self._send("CLOSE")
 
             if self.recv_thread != None:
                 self.recv_thread.join()
@@ -174,10 +212,14 @@ class Client:
             self.connection.close()
             self.connected = False
 
+            self.closed = True
+            print("CLIENT CLOSED")
+
         else:
             self.run = False
 
             if self.connection_thread != None:
                 self.connection_thread.join()
 
-        print("CLIENT CLOSED")
+            self.closed = True
+            print("CLIENT CLOSED")

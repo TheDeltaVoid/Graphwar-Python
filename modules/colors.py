@@ -1,9 +1,6 @@
 from pyray import *
 from modules.encryption import *
 
-with open("assets/default_settings", "r") as file:
-    print(encode(file.read()))
-
 class Colors:
     def __init__(self):
         with open("assets/settings", "r") as file:

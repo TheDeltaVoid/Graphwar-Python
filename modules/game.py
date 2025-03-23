@@ -89,14 +89,20 @@ class Game:
         mouse_pos = get_mouse_position()
         self.input_box.update(delta_time)
 
+        if self.server != None:
+            self.server.update(delta_time)
+
+        elif self.client != None:
+            self.client.update(delta_time)
+
         if self.fire_button.update(delta_time) or is_key_pressed(KeyboardKey.KEY_ENTER):
             anim = GraphAnim(self.input_box.text, [0, self.HEIGHT / 2], should_disappear=False)
             if anim.initialized:
                 if self.server != None:
-                    self.server.fire(self.input_box.text)
+                    self.server.send(self.input_box.text)
 
                 elif self.client != None:
-                    self.client.fire(self.input_box.text)
+                    self.client.send(self.input_box.text)
 
                 self.graph_anims.append(anim)
 

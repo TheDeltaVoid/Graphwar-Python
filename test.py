@@ -11,7 +11,7 @@ if t == "s":
 
     server.start_recv()
 
-    server.fire(input())
+    server.send(input())
     server.close()
 
 if t == "c":
@@ -20,5 +20,5 @@ if t == "c":
 
     client.start_recv()
 
-    client.fire(input())
+    client.send(input())
     client.close()

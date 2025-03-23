@@ -165,4 +165,5 @@ def main():
     if game.client != None:
         game.client.close()
 
-main()
+if __name__ == "__main__":
+    main()

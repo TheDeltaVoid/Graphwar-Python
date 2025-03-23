@@ -38,8 +38,6 @@ def calculate_graph(function: str, start, stop, step) -> list[float, float]:
                 chars.insert(index + 1, "*")
                 function = "".join(chars)
 
-    print(function)
-
     x = numpy.linspace(start, stop, int((stop - start) / step))
     y = eval(function, {"x" : x, "sin" : sin, "cos" : cos, "tan" : tan, "sqrt" : numpy.sqrt})
 

@@ -143,16 +143,10 @@ class Client:
                     continue
 
     def recv_callback(self, text: str):
-        print(text)
         self.recv_callback_func(text)
 
     def connect(self):
-        time_n = time.time()
-        time_l = time.time()
         while self.run:
-            time_n = time.time()
-            print(time_n - time_l)
-            time_l = time_n
             try:
                 print("CLIENT CONNECTING: ", (self.hostname, DEFAULT_PORT))
                 self.connection.settimeout(1)
@@ -162,8 +156,9 @@ class Client:
                 print("CLIENT CONNECTED: ", (self.connection.getpeername()))
 
             except Exception as e:
+                self.connection = s.socket()
+                self.connection.settimeout(1)
                 print(e)
-                time.sleep(1)
                 continue
 
     def close(self):

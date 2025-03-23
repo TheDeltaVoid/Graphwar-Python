@@ -6,7 +6,7 @@ If you want to run it by yourself download python from https://www.python.org (I
 - raylib (install as admin)
 - numpy
 
-(I have no idea why you need to do this)
+(I have no idea why you need to install these as admins but it worked for me)
 
 ```
 python -m pip install pyray

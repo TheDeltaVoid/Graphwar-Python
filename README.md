@@ -21,5 +21,6 @@ python main.py
 ```
 
 TODO:
-- make the game a game
+- add collisions (function is there)
+- add obstacles
 - rework the settings menu

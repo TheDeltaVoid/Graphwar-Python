@@ -1,5 +1,6 @@
 import socket as s
 import threading
+import time
 
 from modules.encryption import *
 
@@ -22,7 +23,7 @@ class Server:
         self.recv_callback_func = recv_callback
 
     def start(self):
-        self.socket.bind((self.hostname, DEFAULT_PORT))
+        self.socket.bind(("0.0.0.0", DEFAULT_PORT))
 
         self.connection_thread = threading.Thread(target=self.listen)
         self.connection_thread.start()
@@ -34,6 +35,7 @@ class Server:
     def send(self, text: str):
         if self.connected:
             data = text.encode()
+            print("SERVER SEND: ", text, " | ", self.addr)
             self.connection.send(data)
 
     def start_recv(self):
@@ -48,13 +50,13 @@ class Server:
                     data = self.connection.recv(1024)
                     text = data.decode()
 
+                    print("SERVER RECV: ", text)
                     self.recv_callback(text)
 
                 except Exception:
                     continue
 
     def recv_callback(self, text: str):
-        print(text)
         self.recv_callback_func(text)
 
     def listen(self):
@@ -62,9 +64,11 @@ class Server:
             try:
                 self.socket.settimeout(1)
                 self.socket.listen(1)
+                print("SERVER LISTEN: ", (self.hostname, DEFAULT_PORT))
                 self.connection, self.addr = self.socket.accept()
 
                 self.connected = True
+                print("SERVER CONNECTED: ", self.addr)
                 break
 
             except Exception:
@@ -88,6 +92,8 @@ class Server:
 
             if self.connection_thread != None:
                 self.connection_thread.join()
+
+        print("SERVER CLOSED")
 
 class Client:
     def __init__(self, recv_callback, hostname):
@@ -115,6 +121,7 @@ class Client:
     def send(self, text: str):
         if self.connected:
             data = text.encode()
+            print("CLIENT SEND: ", text, " | ", (self.connection.getpeername()))
             self.connection.send(data)
 
     def start_recv(self):
@@ -129,6 +136,7 @@ class Client:
                     data = self.connection.recv(1024)
                     text = data.decode()
 
+                    print("CLIENT RECV: ", text)
                     self.recv_callback(text)
 
                 except Exception:
@@ -139,14 +147,23 @@ class Client:
         self.recv_callback_func(text)
 
     def connect(self):
+        time_n = time.time()
+        time_l = time.time()
         while self.run:
+            time_n = time.time()
+            print(time_n - time_l)
+            time_l = time_n
             try:
+                print("CLIENT CONNECTING: ", (self.hostname, DEFAULT_PORT))
                 self.connection.settimeout(1)
                 self.connection.connect((self.hostname, DEFAULT_PORT))
 
                 self.connected = True
+                print("CLIENT CONNECTED: ", (self.connection.getpeername()))
 
-            except Exception:
+            except Exception as e:
+                print(e)
+                time.sleep(1)
                 continue
 
     def close(self):
@@ -167,3 +184,5 @@ class Client:
 
             if self.connection_thread != None:
                 self.connection_thread.join()
+
+        print("CLIENT CLOSED")

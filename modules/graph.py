@@ -65,23 +65,28 @@ def check_collision_graph_circle(points: list[float, float], translate: list[flo
     return False
 
 class GraphAnim:
-    def __init__(self, function, translate=[0, 0], should_disappear=True) -> bool:
+    def __init__(self, function, translate=[0, 0], should_disappear=True, reverse=False):
+        self.reverse = reverse
         self.initialized = False
         
         with open("assets/settings", "r") as file:
             settings = eval(decode(file.read()))
 
         self.anim_speed = settings["game"]["graph_anim_speed"]
-        self.anim_speed = 0.2
+        self.anim_speed = 0.6
+        self.anim_speed_out = 1
         self.counter = 0
 
         self.translate = translate
 
         try:
-            self.points = calculate_graph(function, 0, 1080 - translate[0], 1)
+            self.points = calculate_graph(function, 0, 1080, 1)
 
         except Exception:
             return
+        
+        if self.reverse:
+            self.points = [[x * -1, y] for x, y in self.points]
         
         self.points_count = len(self.points)
 
@@ -94,11 +99,17 @@ class GraphAnim:
         self.initialized = True
 
     def update(self, delta_time: float):
+        if self.finished:
+            return
+
         if not self.disappear:
             self.counter += delta_time * self.anim_speed
 
         elif self.should_disappear:
-            self.counter -= delta_time * self.anim_speed
+            self.counter -= delta_time * self.anim_speed_out
+
+            if self.counter <= 0:
+                self.finished = True
 
         self.counter = min(max(self.counter, 0), 1)
 

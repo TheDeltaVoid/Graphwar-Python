@@ -1,6 +1,5 @@
 import socket as s
 import threading
-import time
 
 from modules.encryption import *
 

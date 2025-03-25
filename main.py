@@ -7,7 +7,7 @@ from modules.menus import MainMenu, SettingsMenu, HostMenu, ConnectMenu
 from modules.game import Game
 from modules.transition import TransitionCircle
 from modules.gui import *
-from modules.networking import Server, Client
+from modules.obstacle import Obstacle
 
 WIDTH, HEIGHT = 1080, 720
 

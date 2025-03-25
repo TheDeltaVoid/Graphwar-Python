@@ -7,23 +7,7 @@ from modules.graph import *
 from modules.gui import InputBox, Button
 from modules.encryption import *
 from modules.networking import Server, Client
-
-class Player:
-    def __init__(self, pos):
-        self.pos = pos
-        self.radius = 10
-
-        self.color = COLORS.SECONDARY
-
-    def check_collision_graph_anim(self, graph_anim: GraphAnim) -> bool:
-        points = graph_anim.points[:graph_anim.points_shown]
-        translate = graph_anim.translate
-
-    def update(self, delta_time: float):
-        pass
-
-    def render(self):
-        draw_circle_v(self.pos, self.radius, self.color)
+from modules.player import Player
 
 class Game:
     def __init__(self, WIDTH, HEIGHT):
@@ -103,8 +87,6 @@ class Game:
             self.player = Player(player_pos)
             self.other_player = Player(other_player_pos)
 
-            print(self.player.pos, " | ", self.other_player.pos)
-
         else:
             self.turn = "Next"
 
@@ -130,13 +112,28 @@ class Game:
 
         self.drag_text_type = settings["game"]["mesure_mode"]
 
+        self.player.reload_settings()
+        self.other_player.reload_settings()
+
     def update(self, delta_time: float):
         mouse_pos = get_mouse_position()
         self.input_box.update(delta_time)
+        self.player.update(delta_time)
+        self.other_player.update(delta_time)
 
         if len(self.graph_anims) > 0 and self.graph_anims[0].finished:
             if self.turn == "Next":
                 self.turn = "True"
+
+        for anim in self.graph_anims:
+            anim.update(delta_time)
+
+            if self.turn == "False" or self.turn == "Next":
+                if self.player.is_colliding_with_graph(anim):
+                    anim.finish()
+
+            elif self.other_player.is_colliding_with_graph(anim):
+                anim.finish()
 
         if self.server != None:
             self.server.update(delta_time)
@@ -188,9 +185,6 @@ class Game:
 
             self.drag_text_pos[0] = self.drag_start[0] + self.drag_vector[0] / 2 + self.drag_text_pos_off[0]
             self.drag_text_pos[1] = self.drag_start[1] + self.drag_vector[1] * -1 / 2 + self.drag_text_pos_off[1]
-
-        for anim in self.graph_anims:
-            anim.update(delta_time)
 
         return "stay"
 

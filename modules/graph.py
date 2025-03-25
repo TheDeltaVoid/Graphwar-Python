@@ -64,6 +64,20 @@ def check_collision_graph_circle(points: list[float, float], translate: list[flo
         
     return False
 
+def where_collision_graph_circle(points: list[float, float], translate: list[float, float], circle_pos: list[float, float], circle_radius: float) -> int:
+    translate[0], translate[1] = int(translate[0]), int(translate[1])
+
+    last_points = []
+    for index, point in enumerate(points):
+        render_point = [translate[0] + int(point[0]), translate[1] - int(point[1 * -1])]
+        last_points.append(render_point)
+
+        if len(last_points) >= 2:
+            if check_collision_circle_line(circle_pos, circle_radius, render_point, last_points[-2]):
+                return index
+        
+    return -1
+
 class GraphAnim:
     def __init__(self, function, translate=[0, 0], should_disappear=True, reverse=False):
         self.reverse = reverse
@@ -89,6 +103,7 @@ class GraphAnim:
             self.points = [[x * -1, y] for x, y in self.points]
         
         self.points_count = len(self.points)
+        self.current_points_count = self.points_count
 
         self.points_shown = 0
 
@@ -98,12 +113,21 @@ class GraphAnim:
 
         self.initialized = True
 
+    def finish(self):
+        if self.should_disappear:
+            self.current_points_count = self.points_shown
+            self.disappear = True
+
+        else:
+            self.finished = True
+
     def update(self, delta_time: float):
         if self.finished:
             return
 
         if not self.disappear:
             self.counter += delta_time * self.anim_speed
+            self.points_shown = int(self.counter * self.points_count)
 
         elif self.should_disappear:
             self.counter -= delta_time * self.anim_speed_out
@@ -111,16 +135,20 @@ class GraphAnim:
             if self.counter <= 0:
                 self.finished = True
 
+            self.points_shown = int(self.counter * self.current_points_count)
+
         self.counter = min(max(self.counter, 0), 1)
 
         if self.counter >= 1:
-            self.disappear = True
+            if self.should_disappear:
+                self.disappear = True 
 
-        self.points_shown = int(self.counter * self.points_count)
+            else:
+                self.finished = True
 
     def render(self):
         if not self.disappear:
             render_graph(self.points[:self.points_shown], self.translate)
 
         else:
-            render_graph(self.points[self.points_count - self.points_shown:], self.translate)
+            render_graph(self.points[self.current_points_count - self.points_shown:], self.translate)

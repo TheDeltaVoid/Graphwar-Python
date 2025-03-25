@@ -24,3 +24,4 @@ TODO:
 - add collisions (function is there)
 - add obstacles
 - rework the settings menu
+- render obstacles holes as holes not as red circles (IDK how but time will bring answers)
